@@ -1,75 +1,126 @@
-import React, { useState } from 'react';
-import { X, Sparkles, CheckCircle2, User, Mail, Phone, Send } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { X, CheckCircle2, User, Mail, Phone, Building2, Send, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-export function DemoModal({ isOpen, onClose }) {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    companySize: '10-50',
-    industry: 'Manufacturing'
-  });
+const COPY = {
+  demo: {
+    badge: 'Book a Demo',
+    title: 'See OneConnect on Your Sales Process',
+    subtitle: 'A short walkthrough of leads, pipeline, follow-ups and reporting - mapped to how your team sells.',
+    submit: 'Book My Demo',
+    doneTitle: 'Your demo request is in.',
+    doneBody: 'Our team will reach out shortly to schedule a walkthrough that fits your sales process.'
+  },
+  trial: {
+    badge: 'Start Free Trial',
+    title: 'Start Your OneConnect Free Trial',
+    subtitle: 'Bring your leads, customers, follow-ups and opportunities into one connected sales process.',
+    submit: 'Start My Free Trial',
+    doneTitle: 'Your trial request is in.',
+    doneBody: 'Our team will set up your workspace and send you access details shortly.'
+  }
+};
 
+const ASSURANCES = ['No credit card required', 'Guided setup', 'Cancel anytime'];
+
+const FIELD_STYLE = {
+  width: '100%',
+  padding: '12px 14px 12px 42px',
+  borderRadius: '12px',
+  background: '#f6f8fa',
+  border: '1px solid rgba(13, 43, 69, 0.12)',
+  color: '#0f172a',
+  fontSize: '0.95rem',
+  fontFamily: 'inherit',
+  outlineColor: '#00b8a9'
+};
+
+const LABEL_STYLE = {
+  display: 'block',
+  fontSize: '0.82rem',
+  color: '#0d2b45',
+  fontWeight: 700,
+  marginBottom: '6px'
+};
+
+const ICON_STYLE = { position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)' };
+
+export function DemoModal({ isOpen, onClose, variant = 'demo' }) {
+  const copy = COPY[variant] || COPY.demo;
+
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', company: '', teamSize: '2-10' });
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e) => e.key === 'Escape' && handleClose();
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitted(true);
-
     try {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
+      confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
     } catch (err) {
-      console.log('Confetti triggered');
+      /* confetti is decorative only */
     }
   };
 
-  const handleReset = () => {
+  function handleClose() {
     setSubmitted(false);
     onClose();
-  };
+  }
+
+  const update = (key) => (e) => setFormData({ ...formData, [key]: e.target.value });
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 200,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '24px',
-      background: 'rgba(13, 43, 69, 0.5)',
-      backdropFilter: 'blur(16px)',
-      WebkitBackdropFilter: 'blur(16px)'
-    }}>
+    <div
+      onClick={handleClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 200,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        background: 'rgba(13, 43, 69, 0.45)',
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
+        overflowY: 'auto'
+      }}
+    >
       <div
-        className="glass-panel"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label={copy.title}
         style={{
           width: '100%',
           maxWidth: '560px',
-          padding: '36px',
+          padding: 'clamp(28px, 4vw, 38px)',
           borderRadius: '24px',
-          background: 'rgba(255, 255, 255, 0.98)',
-          border: '1px solid rgba(0, 184, 169, 0.4)',
-          boxShadow: '0 24px 64px rgba(13, 43, 69, 0.2)',
-          position: 'relative'
+          background: '#ffffff',
+          border: '1px solid rgba(0, 184, 169, 0.3)',
+          boxShadow: '0 30px 80px rgba(13, 43, 69, 0.28)',
+          position: 'relative',
+          margin: 'auto'
         }}
       >
         <button
-          onClick={handleReset}
+          onClick={handleClose}
+          aria-label="Close"
           style={{
             position: 'absolute',
-            top: '20px',
-            right: '20px',
-            background: 'rgba(13, 43, 69, 0.08)',
+            top: '18px',
+            right: '18px',
+            background: 'rgba(13, 43, 69, 0.06)',
             border: 'none',
-            color: '#0d2b45',
             borderRadius: '50%',
             width: '36px',
             height: '36px',
@@ -79,174 +130,127 @@ export function DemoModal({ isOpen, onClose }) {
             cursor: 'pointer'
           }}
         >
-          <X size={18} />
+          <X size={18} color="#0d2b45" />
         </button>
 
         {!submitted ? (
           <div>
-            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-              <div className="glass-pill" style={{ marginBottom: '10px' }}>
-                <Sparkles size={14} /> 14-Day Free Trial • Instant Setup
-              </div>
-              <h3 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0d2b45' }}>Book Your OneConnect CRM Demo</h3>
-              <p style={{ color: '#475569', fontSize: '0.9rem', marginTop: '4px' }}>
-                Experience 3D Spatial lead automation customized for your sales team.
+            <div style={{ marginBottom: '24px', paddingRight: '40px' }}>
+              <span className="glass-pill" style={{ marginBottom: '14px' }}>
+                <Sparkles size={13} /> {copy.badge}
+              </span>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0d2b45', marginTop: '14px' }}>{copy.title}</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.94rem', lineHeight: 1.7, marginTop: '8px' }}>
+                {copy.subtitle}
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: '#0d2b45', fontWeight: '700', marginBottom: '6px' }}>
-                  Full Name *
-                </label>
+                <label style={LABEL_STYLE} htmlFor="oc-name">Full name *</label>
                 <div style={{ position: 'relative' }}>
-                  <User size={16} color="#00b8a9" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)' }} />
-                  <input
-                    type="text"
-                    required
-                    placeholder="John Doe"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '12px 14px 12px 40px',
-                      borderRadius: '12px',
-                      background: 'rgba(241, 245, 249, 0.9)',
-                      border: '1px solid rgba(0, 184, 169, 0.3)',
-                      color: '#0f172a',
-                      fontSize: '0.95rem'
-                    }}
-                  />
+                  <User size={16} color="#00b8a9" style={ICON_STYLE} />
+                  <input id="oc-name" type="text" required placeholder="Your name" value={formData.name} onChange={update('name')} style={FIELD_STYLE} />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '15px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#0d2b45', fontWeight: '700', marginBottom: '6px' }}>
-                    Work Email *
-                  </label>
+                  <label style={LABEL_STYLE} htmlFor="oc-email">Work email *</label>
                   <div style={{ position: 'relative' }}>
-                    <Mail size={16} color="#00b8a9" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)' }} />
-                    <input
-                      type="email"
-                      required
-                      placeholder="john@company.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      style={{
-                        width: '100%',
-                        padding: '12px 14px 12px 40px',
-                        borderRadius: '12px',
-                        background: 'rgba(241, 245, 249, 0.9)',
-                        border: '1px solid rgba(0, 184, 169, 0.3)',
-                        color: '#0f172a',
-                        fontSize: '0.95rem'
-                      }}
-                    />
+                    <Mail size={16} color="#00b8a9" style={ICON_STYLE} />
+                    <input id="oc-email" type="email" required placeholder="you@company.com" value={formData.email} onChange={update('email')} style={FIELD_STYLE} />
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#0d2b45', fontWeight: '700', marginBottom: '6px' }}>
-                    WhatsApp / Phone *
-                  </label>
+                  <label style={LABEL_STYLE} htmlFor="oc-phone">Phone *</label>
                   <div style={{ position: 'relative' }}>
-                    <Phone size={16} color="#00b8a9" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)' }} />
-                    <input
-                      type="tel"
-                      required
-                      placeholder="+1 (555) 000-0000"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      style={{
-                        width: '100%',
-                        padding: '12px 14px 12px 40px',
-                        borderRadius: '12px',
-                        background: 'rgba(241, 245, 249, 0.9)',
-                        border: '1px solid rgba(0, 184, 169, 0.3)',
-                        color: '#0f172a',
-                        fontSize: '0.95rem'
-                      }}
-                    />
+                    <Phone size={16} color="#00b8a9" style={ICON_STYLE} />
+                    <input id="oc-phone" type="tel" required placeholder="+91 00000 00000" value={formData.phone} onChange={update('phone')} style={FIELD_STYLE} />
                   </div>
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '15px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#0d2b45', fontWeight: '700', marginBottom: '6px' }}>
-                    Industry
-                  </label>
-                  <select
-                    value={formData.industry}
-                    onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '12px 14px',
-                      borderRadius: '12px',
-                      background: 'rgba(241, 245, 249, 0.9)',
-                      border: '1px solid rgba(0, 184, 169, 0.3)',
-                      color: '#0f172a',
-                      fontSize: '0.95rem'
-                    }}
-                  >
-                    <option value="Manufacturing">Manufacturing</option>
-                    <option value="E-Commerce">E-Commerce</option>
-                    <option value="Real Estate">Real Estate</option>
-                    <option value="Healthcare">Healthcare & Services</option>
-                    <option value="Enterprise">Other Vertical</option>
-                  </select>
+                  <label style={LABEL_STYLE} htmlFor="oc-company">Company</label>
+                  <div style={{ position: 'relative' }}>
+                    <Building2 size={16} color="#00b8a9" style={ICON_STYLE} />
+                    <input id="oc-company" type="text" placeholder="Company name" value={formData.company} onChange={update('company')} style={FIELD_STYLE} />
+                  </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#0d2b45', fontWeight: '700', marginBottom: '6px' }}>
-                    Team Size
-                  </label>
+                  <label style={LABEL_STYLE} htmlFor="oc-team">Sales team size</label>
                   <select
-                    value={formData.companySize}
-                    onChange={(e) => setFormData({ ...formData, companySize: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '12px 14px',
-                      borderRadius: '12px',
-                      background: 'rgba(241, 245, 249, 0.9)',
-                      border: '1px solid rgba(0, 184, 169, 0.3)',
-                      color: '#0f172a',
-                      fontSize: '0.95rem'
-                    }}
+                    id="oc-team"
+                    value={formData.teamSize}
+                    onChange={update('teamSize')}
+                    style={{ ...FIELD_STYLE, paddingLeft: '14px' }}
                   >
-                    <option value="1-10">1 - 10 Users</option>
-                    <option value="10-50">10 - 50 Users</option>
-                    <option value="50-250">50 - 250 Users</option>
-                    <option value="250+">250+ Enterprise</option>
+                    <option value="1">Just me</option>
+                    <option value="2-10">2 - 10</option>
+                    <option value="11-50">11 - 50</option>
+                    <option value="50+">50+</option>
                   </select>
                 </div>
               </div>
 
-              {/* Guarantees Callout */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', borderRadius: '10px', background: 'rgba(0, 184, 169, 0.08)', border: '1px dashed rgba(0, 184, 169, 0.3)', fontSize: '0.8rem', color: '#00796b', fontWeight: '600' }}>
-                <span>✓ No Credit Card Needed</span>
-                <span>✓ Free Setup Assistance</span>
-                <span>✓ Full SSL Data Security</span>
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '14px',
+                  justifyContent: 'space-between',
+                  padding: '11px 15px',
+                  borderRadius: '11px',
+                  background: 'rgba(0, 184, 169, 0.07)',
+                  border: '1px solid rgba(0, 184, 169, 0.2)',
+                  fontSize: '0.79rem',
+                  color: '#00796b',
+                  fontWeight: 600
+                }}
+              >
+                {ASSURANCES.map((item) => (
+                  <span key={item}>✓ {item}</span>
+                ))}
               </div>
 
-              <button className="btn-primary" type="submit" style={{ width: '100%', padding: '14px', fontSize: '1rem', marginTop: '6px' }}>
-                <Send size={18} />
-                <span>Confirm & Reserve My Free Demo</span>
+              <button className="btn-primary" type="submit" style={{ width: '100%', padding: '14px', fontSize: '1rem' }}>
+                <Send size={17} />
+                <span>{copy.submit}</span>
               </button>
             </form>
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '20px 0' }}>
-            <div style={{ display: 'inline-flex', background: 'rgba(0, 184, 169, 0.15)', border: '2px solid #00b8a9', borderRadius: '50%', padding: '16px', marginBottom: '16px' }}>
-              <CheckCircle2 size={48} color="#00b8a9" />
+          <div style={{ textAlign: 'center', padding: '16px 0' }}>
+            <div
+              style={{
+                display: 'inline-flex',
+                background: 'rgba(0, 184, 169, 0.14)',
+                border: '2px solid #00b8a9',
+                borderRadius: '50%',
+                padding: '16px',
+                marginBottom: '18px'
+              }}
+            >
+              <CheckCircle2 size={44} color="#00b8a9" />
             </div>
-            <h3 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '8px', color: '#0d2b45' }}>Demo Reserved Successfully!</h3>
-            <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.6, maxWidth: '420px', margin: '0 auto 24px auto' }}>
-              Thank you, <strong style={{ color: '#00b8a9' }}>{formData.name || 'Sales Leader'}</strong>. Our CRM solutions architect will contact you within 15 minutes to schedule your live walkthrough.
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '10px', color: '#0d2b45' }}>{copy.doneTitle}</h3>
+            <p
+              style={{
+                color: 'var(--text-secondary)',
+                fontSize: '0.98rem',
+                lineHeight: 1.75,
+                maxWidth: '400px',
+                margin: '0 auto 24px auto'
+              }}
+            >
+              Thanks{formData.name ? `, ${formData.name.split(' ')[0]}` : ''}. {copy.doneBody}
             </p>
-            <button className="btn-primary" onClick={handleReset} style={{ padding: '12px 30px' }}>
-              Back to Experience
+            <button className="btn-primary" onClick={handleClose} style={{ padding: '12px 30px' }}>
+              Back to the site
             </button>
           </div>
         )}

@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body { margin: 0; font: 13px monospace; background: #fff; color: #000; }
+      pre { padding: 12px; white-space: pre-wrap; }
+      iframe { width: 1200px; height: 500px; border: 2px solid #999; }
+    </style>
+  </head>
+  <body>
+    <pre id="out">loading…</pre>
+    <iframe id="f" src="/design2"></iframe>
+    <script>
+      // Dev-only: surfaces runtime errors from the design 2 route.
+      var out = document.getElementById('out');
+      var frame = document.getElementById('f');
+      var errors = [];
+
+      frame.addEventListener('load', function () {
+        var w = frame.contentWindow;
+        w.addEventListener('error', function (e) {
+          errors.push('ERROR: ' + e.message + ' @ ' + (e.filename || '') + ':' + (e.lineno || ''));
+        });
+        w.addEventListener('unhandledrejection', function (e) {
+          errors.push('REJECTION: ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason)));
+        });
+
+        setTimeout(function () {
+          var doc = frame.contentDocument;
+          var root = doc.getElementById('root');
+          var text = (doc.body.innerText || '').trim();
+          var lines = [
+            'root children: ' + (root ? root.children.length : 'NO ROOT'),
+            'body text length: ' + text.length,
+            'first 160 chars: ' + JSON.stringify(text.slice(0, 160)),
+            'sections found: ' + doc.querySelectorAll('section').length,
+            'd2-in elements: ' + doc.querySelectorAll('.d2-in').length,
+            'd2-in--on elements: ' + doc.querySelectorAll('.d2-in--on').length,
+            'errors: ' + (errors.length ? errors.join(' | ') : 'none captured after load')
+          ];
+          out.textContent = lines.join('\n');
+        }, 2500);
+      });
+    </script>
+  </body>
+</html>

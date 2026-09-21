@@ -1,30 +1,49 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+/**
+ * Gives each section a light spatial tilt as it moves through the viewport.
+ * The transform is deliberately subtle - text stays upright and fully opaque
+ * near the centre of the screen so body copy is always readable.
+ */
 export function Scroll3DSection({ children, id, className = '', style = {} }) {
   const sectionRef = useRef(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const frame = useRef(0);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (!sectionRef.current) return;
-      const rect = sectionRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
+    const reduceMotion =
+      typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
 
-      // Calculate relative scroll progress for this section (-1 when below, 0 when centered, +1 when above)
-      const progress = (rect.top + rect.height / 2 - windowHeight / 2) / windowHeight;
-      setScrollProgress(progress);
+    const measure = () => {
+      frame.current = 0;
+      const el = sectionRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const viewport = window.innerHeight;
+      setProgress((rect.top + rect.height / 2 - viewport / 2) / viewport);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    const onScroll = () => {
+      if (frame.current) return;
+      frame.current = window.requestAnimationFrame(measure);
+    };
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    measure();
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame.current) window.cancelAnimationFrame(frame.current);
+    };
   }, []);
 
-  // 3D Spatial Scroll Transforms (Rotation, Z-depth translation, and Opacity)
-  const rotateX = Math.max(-12, Math.min(12, scrollProgress * 14));
-  const translateZ = Math.max(-120, Math.min(40, -Math.abs(scrollProgress) * 100));
-  const opacity = Math.max(0.2, 1 - Math.abs(scrollProgress) * 0.7);
+  const clamped = Math.max(-1.6, Math.min(1.6, progress));
+  const rotateX = clamped * 2.6;
+  const translateZ = -Math.abs(clamped) * 26;
+  const opacity = Math.max(0.78, 1 - Math.abs(clamped) * 0.16);
 
   return (
     <div
@@ -32,10 +51,9 @@ export function Scroll3DSection({ children, id, className = '', style = {} }) {
       id={id}
       className={`spatial-card-3d ${className}`}
       style={{
-        transform: `perspective(1200px) rotateX(${rotateX}deg) translateZ(${translateZ}px)`,
-        opacity: opacity,
-        transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease',
-        transformStyle: 'preserve-3d',
+        transform: `perspective(1600px) rotateX(${rotateX}deg) translateZ(${translateZ}px)`,
+        opacity,
+        transition: 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease',
         ...style
       }}
     >

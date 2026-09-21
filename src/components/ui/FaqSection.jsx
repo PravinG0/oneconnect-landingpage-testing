@@ -1,111 +1,113 @@
 import React, { useState } from 'react';
-import { ChevronDown, HelpCircle } from 'lucide-react';
+import { Plus, Minus, ArrowRight } from 'lucide-react';
+import { FAQ } from '../../data/siteContent';
+import { Reveal } from './Reveal';
 
-const FAQS = [
-  {
-    q: '1. What is CRM software and why does my business need it?',
-    a: 'CRM (Customer Relationship Management) software helps businesses manage leads, customer interactions, sales opportunities, and communication from a single platform. It improves team productivity, streamlines sales processes, and helps businesses build stronger customer relationships while increasing conversion rates.'
-  },
-  {
-    q: '2. How can OneConnect CRM help increase lead conversion rates?',
-    a: 'OneConnect CRM helps businesses capture leads, automate follow-ups, track customer interactions, and manage opportunities efficiently. By ensuring timely engagement and organized lead management, businesses can respond faster and convert more prospects into customers.'
-  },
-  {
-    q: '3. Can OneConnect CRM automate sales and customer follow-ups?',
-    a: 'Yes. OneConnect CRM includes automation features for reminders, follow-ups, lead assignment, customer communication, and sales activities. This helps teams save time, reduce manual work, and focus on closing deals.'
-  },
-  {
-    q: '4. Is OneConnect CRM suitable for small businesses and enterprises?',
-    a: 'Absolutely. OneConnect CRM is designed to support businesses of all sizes, including startups, small businesses, growing organizations, and enterprises. Its scalability adapts to your business needs as you grow.'
-  },
-  {
-    q: '5. Can OneConnect CRM integrate with marketing and lead generation platforms?',
-    a: 'Yes. OneConnect CRM supports integrations with Meta Lead Ads, IndiaMART, calling solutions, email communication tools, and other business platforms, helping businesses centralize lead management and streamline customer engagement.'
-  }
-];
-
-export function FaqSection() {
+/** Open list with hairline rules - the answer slides down in place. */
+export function FaqSection({ onOpenDemo }) {
   const [openIdx, setOpenIdx] = useState(0);
 
-  const toggleFaq = (idx) => {
-    setOpenIdx(openIdx === idx ? null : idx);
-  };
-
   return (
-    <section id="faq" style={{
-      width: '100%',
-      maxWidth: '1000px',
-      margin: '0 auto',
-      padding: '80px 24px',
-      position: 'relative'
-    }}>
-      <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-        <span className="glass-pill" style={{ marginBottom: '12px' }}>
-          <HelpCircle size={14} /> Clear Answers
-        </span>
-        <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: '800', marginBottom: '14px', color: '#0d2b45' }}>
-          Frequently Asked Questions
-        </h2>
-        <p style={{ color: '#475569', fontSize: '1rem' }}>
-          Everything you need to know about OneConnect CRM platform and capabilities.
-        </p>
-      </div>
+    <section id="faq" className="section-shell">
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(330px, 100%), 1fr))',
+          gap: '56px',
+          alignItems: 'start'
+        }}
+      >
+        {/* Left: heading + escape hatch */}
+        <Reveal>
+          <span className="eyebrow">{FAQ.eyebrow}</span>
+          <h2 className="section-title" style={{ maxWidth: '420px' }}>
+            {FAQ.heading}
+          </h2>
+          <p className="section-lead" style={{ maxWidth: '400px', marginBottom: '24px' }}>
+            Still have a question about your sales process? Our team is happy to walk through it with you.
+          </p>
+          <button className="btn-secondary" onClick={onOpenDemo}>
+            Talk to our team <ArrowRight size={16} color="#00b8a9" />
+          </button>
+        </Reveal>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        {FAQS.map((faq, idx) => {
-          const isOpen = openIdx === idx;
-          return (
-            <div
-              key={idx}
-              className="glass-panel"
-              style={{
-                borderRadius: '16px',
-                background: isOpen ? 'rgba(255, 255, 255, 0.98)' : 'rgba(255, 255, 255, 0.88)',
-                border: `1px solid ${isOpen ? '#00b8a9' : 'rgba(0, 184, 169, 0.22)'}`,
-                boxShadow: isOpen ? '0 8px 24px rgba(0, 184, 169, 0.12)' : '0 4px 14px rgba(13, 43, 69, 0.04)',
-                overflow: 'hidden',
-                transition: 'all 0.3s ease'
-              }}
-            >
-              <button
-                onClick={() => toggleFaq(idx)}
-                style={{
-                  width: '100%',
-                  padding: '20px 24px',
-                  background: 'none',
-                  border: 'none',
-                  color: '#0d2b45',
-                  fontFamily: 'Outfit, sans-serif',
-                  fontWeight: '700',
-                  fontSize: '1.05rem',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '16px'
-                }}
-              >
-                <span>{faq.q}</span>
-                <ChevronDown
-                  size={20}
-                  color={isOpen ? '#00b8a9' : '#64748b'}
+        {/* Right: the questions */}
+        <div>
+          {FAQ.items.map((item, idx) => {
+            const isOpen = openIdx === idx;
+
+            return (
+              <Reveal key={item.q} className={`faq-item ${isOpen ? 'faq-item--open' : ''}`} delay={idx * 50}>
+                <button
+                  onClick={() => setOpenIdx(isOpen ? null : idx)}
+                  aria-expanded={isOpen}
                   style={{
-                    transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                    transition: 'transform 0.3s ease',
-                    flexShrink: 0
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '18px',
+                    padding: '20px 14px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left'
                   }}
-                />
-              </button>
+                >
+                  <span
+                    style={{
+                      fontFamily: 'Outfit, sans-serif',
+                      fontWeight: 700,
+                      fontSize: '1.03rem',
+                      color: isOpen ? 'var(--teal-deep)' : 'var(--navy-primary)',
+                      lineHeight: 1.45,
+                      transition: 'color 0.3s ease'
+                    }}
+                  >
+                    {item.q}
+                  </span>
 
-              {isOpen && (
-                <div style={{ padding: '0 24px 22px 24px', color: '#475569', fontSize: '0.95rem', lineHeight: 1.65 }}>
-                  {faq.a}
+                  <span
+                    style={{
+                      width: '26px',
+                      height: '26px',
+                      flexShrink: 0,
+                      borderRadius: '50%',
+                      background: isOpen ? '#00b8a9' : 'rgba(13, 43, 69, 0.06)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'background 0.3s ease'
+                    }}
+                  >
+                    {isOpen ? <Minus size={14} color="#ffffff" /> : <Plus size={14} color="#0d2b45" />}
+                  </span>
+                </button>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateRows: isOpen ? '1fr' : '0fr',
+                    transition: 'grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+                  }}
+                >
+                  <div style={{ overflow: 'hidden' }}>
+                    <p
+                      style={{
+                        padding: '0 14px 22px 14px',
+                        fontSize: '0.96rem',
+                        lineHeight: 1.8,
+                        color: 'var(--text-secondary)'
+                      }}
+                    >
+                      {item.a}
+                    </p>
+                  </div>
                 </div>
-              )}
-            </div>
-          );
-        })}
+              </Reveal>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

@@ -1,115 +1,192 @@
 import React from 'react';
-import { ShieldCheck, Lock, Sparkles } from 'lucide-react';
+import { ArrowRight, Cloud, ShieldCheck } from 'lucide-react';
+import { FOOTER, MODULES } from '../../data/siteContent';
 
-export function Footer({ onOpenDemo, onOpenRoi }) {
-  const scrollToSection = (id) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+const COMPANY_LINKS = [
+  { id: 'why-oneconnect', label: 'Why OneConnect' },
+  { id: 'how-it-works', label: 'How It Works' },
+  { id: 'who-its-for', label: 'Who It Is For' },
+  { id: 'comparison', label: 'Comparison' },
+  { id: 'faq', label: 'FAQ' }
+];
+
+export function Footer({ onOpenDemo, onOpenTrial }) {
+  const goTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
   return (
-    <footer style={{
-      width: '100%',
-      background: '#ffffff',
-      borderTop: '1px solid rgba(0, 184, 169, 0.25)',
-      position: 'relative',
-      zIndex: 20,
-      padding: '70px 24px 36px 24px'
-    }}>
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-        gap: '40px',
-        marginBottom: '40px'
-      }}>
-        {/* Brand Column */}
-        <div>
+    <footer
+      style={{
+        width: '100%',
+        background: '#ffffff',
+        borderTop: '1px solid rgba(13, 43, 69, 0.09)',
+        position: 'relative',
+        zIndex: 20,
+        padding: '68px 24px 30px 24px'
+      }}
+    >
+      <div
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: '44px',
+          marginBottom: '44px'
+        }}
+      >
+        {/* Brand */}
+        <div style={{ maxWidth: '320px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
             <img
               src="/OneConnect_Horizontal.jpg"
-              alt="OneConnect Logo"
-              style={{ height: '32px', borderRadius: '4px', background: '#ffffff', padding: '3px 6px', boxShadow: '0 2px 8px rgba(0, 184, 169, 0.2)' }}
-              onError={(e) => { e.target.style.display = 'none'; }}
+              alt="OneConnect"
+              style={{
+                height: '32px',
+                borderRadius: '6px',
+                background: '#ffffff',
+                padding: '3px 6px',
+                boxShadow: '0 2px 8px rgba(0, 184, 169, 0.18)'
+              }}
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
             />
-            <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: '800', fontSize: '1.2rem', color: '#0d2b45' }}>
+            <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 800, fontSize: '1.16rem', color: '#0d2b45' }}>
               One<span style={{ color: '#00b8a9' }}>Connect</span>
             </span>
           </div>
-          <p style={{ color: '#475569', fontSize: '0.88rem', lineHeight: 1.6, marginBottom: '16px' }}>
-            The 3D Spatial CRM platform helping businesses capture, manage, automate, and convert leads faster.
+
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.93rem', lineHeight: 1.7, marginBottom: '18px' }}>
+            {FOOTER.tagline}
           </p>
-          <div style={{ display: 'flex', gap: '10px' }}>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '9px' }}>
             <span className="glass-pill" style={{ fontSize: '0.75rem' }}>
-              <ShieldCheck size={12} color="#008f83" /> 99.9% SLA Uptime
+              <Cloud size={12} color="#00796b" /> Cloud-based
             </span>
             <span className="glass-pill" style={{ fontSize: '0.75rem' }}>
-              <Lock size={12} color="#008f83" /> SSL/TLS Encrypted
+              <ShieldCheck size={12} color="#00796b" /> Secure access
             </span>
           </div>
         </div>
 
-        {/* Feature Modules Navigation */}
+        {/* Product */}
         <div>
-          <h4 style={{ fontSize: '0.95rem', color: '#0d2b45', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>
-            Platform Modules
+          <h4
+            style={{
+              fontSize: '0.78rem',
+              color: '#0d2b45',
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              marginBottom: '16px'
+            }}
+          >
+            Product
           </h4>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.9rem', color: '#475569' }}>
-            <li style={{ cursor: 'pointer' }} onClick={() => scrollToSection('features')}>🎯 Lead Management</li>
-            <li style={{ cursor: 'pointer' }} onClick={() => scrollToSection('features')}>💬 WhatsApp & Email Campaigns</li>
-            <li style={{ cursor: 'pointer' }} onClick={() => scrollToSection('features')}>📞 Integrated Calling</li>
-            <li style={{ cursor: 'pointer' }} onClick={() => scrollToSection('features')}>⏰ Smart Reminders & Tasks</li>
-            <li style={{ cursor: 'pointer' }} onClick={() => scrollToSection('features')}>🔗 Marketing Lead Integrations</li>
-            <li style={{ cursor: 'pointer' }} onClick={() => scrollToSection('features')}>🛡️ Cloud CRM Security</li>
+          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '11px' }}>
+            {MODULES.map((module) => (
+              <li key={module.id}>
+                <button
+                  onClick={() => goTo('features')}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer',
+                    color: 'var(--text-secondary)',
+                    fontSize: '0.9rem',
+                    fontFamily: 'inherit'
+                  }}
+                >
+                  {module.label}
+                </button>
+              </li>
+            ))}
           </ul>
         </div>
 
-        {/* Vertical Solutions */}
+        {/* Explore */}
         <div>
-          <h4 style={{ fontSize: '0.95rem', color: '#0d2b45', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>
-            Industries Supported
+          <h4
+            style={{
+              fontSize: '0.78rem',
+              color: '#0d2b45',
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              marginBottom: '16px'
+            }}
+          >
+            Explore
           </h4>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.9rem', color: '#475569' }}>
-            <li style={{ cursor: 'pointer' }} onClick={() => scrollToSection('industries')}>🏭 Manufacturing</li>
-            <li style={{ cursor: 'pointer' }} onClick={() => scrollToSection('industries')}>🩺 Healthcare</li>
-            <li style={{ cursor: 'pointer' }} onClick={() => scrollToSection('industries')}>🛒 Retail & E-Commerce</li>
-            <li style={{ cursor: 'pointer' }} onClick={() => scrollToSection('industries')}>🚚 Logistics</li>
-            <li style={{ cursor: 'pointer' }} onClick={() => scrollToSection('industries')}>🎓 Education & Real Estate</li>
+          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '11px' }}>
+            {COMPANY_LINKS.map((link) => (
+              <li key={link.id}>
+                <button
+                  onClick={() => goTo(link.id)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer',
+                    color: 'var(--text-secondary)',
+                    fontSize: '0.9rem',
+                    fontFamily: 'inherit'
+                  }}
+                >
+                  {link.label}
+                </button>
+              </li>
+            ))}
           </ul>
         </div>
 
-        {/* Growth CTAs */}
+        {/* Get started */}
         <div>
-          <h4 style={{ fontSize: '0.95rem', color: '#0d2b45', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>
+          <h4
+            style={{
+              fontSize: '0.78rem',
+              color: '#0d2b45',
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              marginBottom: '16px'
+            }}
+          >
             Get Started
           </h4>
-          <p style={{ color: '#475569', fontSize: '0.85rem', marginBottom: '16px' }}>
-            Ready to convert leads 3× faster? Claim your 14-day free trial now.
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '16px' }}>
+            See how OneConnect fits your sales process.
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button className="btn-primary" onClick={onOpenDemo} style={{ padding: '10px 18px', fontSize: '0.88rem' }}>
-              <Sparkles size={14} /> Book Free Demo
+            <button className="btn-primary" onClick={onOpenDemo} style={{ padding: '11px 18px', fontSize: '0.88rem' }}>
+              Book a Demo <ArrowRight size={14} />
             </button>
-            <button className="btn-secondary" onClick={onOpenRoi} style={{ padding: '10px 18px', fontSize: '0.88rem' }}>
-              Calculate CRM ROI
+            <button className="btn-secondary" onClick={onOpenTrial} style={{ padding: '11px 18px', fontSize: '0.88rem' }}>
+              Start Free Trial
             </button>
           </div>
         </div>
       </div>
 
-      <hr style={{ borderColor: 'rgba(0, 184, 169, 0.15)', margin: '20px 0' }} />
-
-      <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '12px', fontSize: '0.8rem', color: '#64748b' }}>
-        <div>
-          © {new Date().getFullYear()} OneConnect CRM Inc. All rights reserved. 3D Spatial Web Experience.
-        </div>
-        <div style={{ display: 'flex', gap: '20px' }}>
+      <div
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          paddingTop: '22px',
+          borderTop: '1px solid rgba(13, 43, 69, 0.08)',
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '12px',
+          fontSize: '0.82rem',
+          color: '#7c8a9a'
+        }}
+      >
+        <span>© {new Date().getFullYear()} {FOOTER.brand}. All rights reserved.</span>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
           <span>Privacy Policy</span>
           <span>Terms of Service</span>
-          <span>Security & Compliance</span>
+          <span>Security</span>
         </div>
       </div>
     </footer>

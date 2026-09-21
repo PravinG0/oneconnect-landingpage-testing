@@ -1,99 +1,100 @@
 import React, { useState } from 'react';
 import { AntigravityCanvas } from './components/canvas/AntigravityCanvas';
 import { NavbarHUD } from './components/ui/NavbarHUD';
-import { HeroOverlay } from './components/ui/HeroOverlay';
-import { PainSolutionSection } from './components/ui/PainSolutionSection';
-import { FeatureGridSection } from './components/ui/FeatureGridSection';
-import { WhyChooseSection } from './components/ui/WhyChooseSection';
-import { IndustriesSection } from './components/ui/IndustriesSection';
-import { FaqSection } from './components/ui/FaqSection';
 import { Scroll3DSection } from './components/ui/Scroll3DSection';
-import { ModuleDetailModal } from './components/ui/ModuleDetailModal';
-import { RoiCalculatorModal } from './components/ui/RoiCalculatorModal';
-import { DemoModal } from './components/ui/DemoModal';
+import { HeroSection } from './components/ui/HeroSection';
+import { TrustedBySection } from './components/ui/TrustedBySection';
+import { CoreValueSection } from './components/ui/CoreValueSection';
+import { ProductOverviewSection } from './components/ui/ProductOverviewSection';
+import { WhyOneConnectSection } from './components/ui/WhyOneConnectSection';
+import { ComparisonSection } from './components/ui/ComparisonSection';
+import { GrowthStageSection } from './components/ui/GrowthStageSection';
+import { HowItWorksSection } from './components/ui/HowItWorksSection';
+import { PositioningSection } from './components/ui/PositioningSection';
+import { TestimonialsSection } from './components/ui/TestimonialsSection';
+import { FaqSection } from './components/ui/FaqSection';
+import { FinalCtaSection } from './components/ui/FinalCtaSection';
 import { Footer } from './components/ui/Footer';
+import { ModuleDetailModal } from './components/ui/ModuleDetailModal';
+import { DemoModal } from './components/ui/DemoModal';
 
 export default function App() {
   const [selectedModule, setSelectedModule] = useState(null);
-  const [isDemoOpen, setIsDemoOpen] = useState(false);
-  const [isRoiOpen, setIsRoiOpen] = useState(false);
+  // 'demo' | 'trial' | null - both use the same form with different copy
+  const [formVariant, setFormVariant] = useState(null);
+
+  const openDemo = () => setFormVariant('demo');
+  const openTrial = () => setFormVariant('trial');
 
   return (
     <div style={{ position: 'relative', width: '100%', minHeight: '100vh', background: '#f8fafc' }}>
-      {/* 3D Light Space Canvas */}
+      {/* Light 3D spatial background */}
       <AntigravityCanvas />
+      <div className="canvas-veil" />
 
-      {/* Light Glassmorphism Header */}
-      <NavbarHUD
-        onOpenDemo={() => setIsDemoOpen(true)}
-        onOpenRoi={() => setIsRoiOpen(true)}
-      />
+      <NavbarHUD onOpenDemo={openDemo} onOpenTrial={openTrial} />
 
-      {/* Main 3D Spatial Scroll Content Container */}
       <main className="ui-container">
-        {/* Section 1: Hero Section */}
-        <Scroll3DSection id="hero">
-          <HeroOverlay
-            onOpenDemo={() => setIsDemoOpen(true)}
-            onOpenRoi={() => setIsRoiOpen(true)}
-          />
+        {/* Hero + logo rail */}
+        <HeroSection onOpenDemo={openDemo} onOpenTrial={openTrial} />
+        <TrustedBySection />
+
+        {/* Scattered tools converge into one process */}
+        <Scroll3DSection>
+          <CoreValueSection />
         </Scroll3DSection>
 
-        {/* Section 2: Legacy Bottlenecks vs 4 Platform Pillars */}
-        <Scroll3DSection id="solutions">
-          <PainSolutionSection />
+        {/* Alternating showcase rows, one per module */}
+        <ProductOverviewSection onSelectModule={setSelectedModule} />
+
+        {/* Numbered reason list */}
+        <Scroll3DSection>
+          <WhyOneConnectSection onOpenDemo={openDemo} />
         </Scroll3DSection>
 
-        {/* Section 3: 6 Feature Modules Grid */}
-        <Scroll3DSection id="features">
-          <FeatureGridSection
-            onSelectModule={setSelectedModule}
-            onOpenDemo={() => setIsDemoOpen(true)}
-          />
+        {/* Before -> after transformation spine */}
+        <Scroll3DSection>
+          <ComparisonSection />
         </Scroll3DSection>
 
-        {/* Section 4: Why Businesses Choose OneConnect */}
-        <Scroll3DSection id="why-choose">
-          <WhyChooseSection
-            onOpenDemo={() => setIsDemoOpen(true)}
-          />
+        {/* Persona rail */}
+        <Scroll3DSection>
+          <GrowthStageSection />
         </Scroll3DSection>
 
-        {/* Section 5: 10 Industries Served */}
-        <Scroll3DSection id="industries">
-          <IndustriesSection />
+        {/* Journey path */}
+        <Scroll3DSection>
+          <HowItWorksSection />
         </Scroll3DSection>
 
-        {/* Section 6: Interactive FAQ Accordion */}
-        <Scroll3DSection id="faq">
-          <FaqSection />
+        {/* Full-width dark band - no tilt, it spans the viewport */}
+        <PositioningSection />
+
+        <Scroll3DSection>
+          <TestimonialsSection onOpenDemo={openDemo} />
         </Scroll3DSection>
 
-        {/* Section 7: Enterprise Footer */}
-        <Scroll3DSection id="footer">
-          <Footer
-            onOpenDemo={() => setIsDemoOpen(true)}
-            onOpenRoi={() => setIsRoiOpen(true)}
-          />
+        <Scroll3DSection>
+          <FaqSection onOpenDemo={openDemo} />
         </Scroll3DSection>
+
+        {/* Full-width closing band */}
+        <FinalCtaSection onOpenDemo={openDemo} onOpenTrial={openTrial} />
+
+        <Footer onOpenDemo={openDemo} onOpenTrial={openTrial} />
       </main>
 
-      {/* Modals & Popups */}
+      {/* Overlays */}
       <ModuleDetailModal
         moduleData={selectedModule}
         onClose={() => setSelectedModule(null)}
-        onOpenDemo={() => setIsDemoOpen(true)}
-      />
-
-      <RoiCalculatorModal
-        isOpen={isRoiOpen}
-        onClose={() => setIsRoiOpen(false)}
-        onOpenDemo={() => setIsDemoOpen(true)}
+        onOpenDemo={openDemo}
       />
 
       <DemoModal
-        isOpen={isDemoOpen}
-        onClose={() => setIsDemoOpen(false)}
+        isOpen={formVariant !== null}
+        variant={formVariant || 'demo'}
+        onClose={() => setFormVariant(null)}
       />
     </div>
   );

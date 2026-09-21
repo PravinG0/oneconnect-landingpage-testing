@@ -13,7 +13,7 @@ function SpatialParticles({ scrollProgress, mousePos }) {
 
     const teal = new THREE.Color('#00b8a9');
     const cyan = new THREE.Color('#0dbeaa');
-    const navy = new THREE.Color('#0d2b45');
+    const mint = new THREE.Color('#7fd8cd');
 
     for (let i = 0; i < count; i++) {
       const idx = i * 3;
@@ -22,7 +22,7 @@ function SpatialParticles({ scrollProgress, mousePos }) {
       posArr[idx + 2] = (Math.random() - 0.5) * 50;
 
       const r = Math.random();
-      const c = r > 0.6 ? cyan : r > 0.3 ? teal : navy;
+      const c = r > 0.6 ? cyan : r > 0.3 ? teal : mint;
       colArr[idx] = c.r;
       colArr[idx + 1] = c.g;
       colArr[idx + 2] = c.b;
@@ -56,7 +56,7 @@ function SpatialParticles({ scrollProgress, mousePos }) {
         <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
         <bufferAttribute attach="attributes-color" count={count} array={colors} itemSize={3} />
       </bufferGeometry>
-      <pointsMaterial size={0.22} vertexColors transparent opacity={0.65} sizeAttenuation />
+      <pointsMaterial size={0.17} vertexColors transparent opacity={0.45} sizeAttenuation />
     </points>
   );
 }
